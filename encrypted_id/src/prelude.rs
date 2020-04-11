@@ -1,5 +1,5 @@
 pub use crate::{
     decrypt::{self, Decrypt},
     encrypt::{self, Encrypt},
-    EError, EResult,
+    init_conf, EError, EResult,
 };
