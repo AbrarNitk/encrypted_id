@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
+use failure::Fail;
 
 pub type EResult<T> = std::result::Result<T, failure::Error>;
 
@@ -22,10 +23,20 @@ pub fn init_conf(secret_key: &str) {
     conf.secret_key_bytes = secret_key.as_bytes().to_owned();
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+#[derive(Fail, Debug)]
+pub enum Error {
+    #[fail(display = "Encryption error: {:?}", _0)]
+    Encrypt(crypto::symmetriccipher::SymmetricCipherError),
+
+    #[fail(display = "Decryption error: {:?}", _0)]
+    Decrypt(crypto::symmetriccipher::SymmetricCipherError),
+
+    #[fail(display = "Invalid input")]
+    InvalidInput,
+
+    #[fail(display = "CRC mismatch")]
+    CRCMismatch,
+
+    #[fail(display = "SecretKey is none in encrypt config, initialize config first")]
+    SecretKeyNotFound,
 }
