@@ -62,7 +62,7 @@ pub fn decryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ident: syn::Ident = derive_input.ident;
     quote!(
         impl Decrypt for #ident #generics {
-            fn dkey(&self, ekey: &str) -> Result<u64> {
+            fn id(&self, ekey: &str) -> Result<u64> {
                 decode_ekey_util(ekey, #sub_key)
             }
         }

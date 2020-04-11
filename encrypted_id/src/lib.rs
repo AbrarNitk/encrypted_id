@@ -1,8 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
 
-use failure::_core::marker::PhantomData;
-
 pub type EResult<T> = std::result::Result<T, failure::Error>;
 
 mod encrypt;
