@@ -69,16 +69,16 @@ fn decode_util(
     }
 
     let mut rdr = std::io::Cursor::new(final_result);
-    let crc = rdr.read_u32::<byteorder::LittleEndian>()? & 0xffff_ffff;
+    let crc = rdr.read_u32::<byteorder::LittleEndian>()?;
     let id = rdr.read_u64::<byteorder::LittleEndian>()?;
     let version = rdr.read_u32::<byteorder::LittleEndian>()?;
 
     let expected_crc: u32 = if version == 0 {
-        crc::crc32::checksum_ieee(&vec![0; id as usize]) & 0xffff_ffff
+        crc::crc32::checksum_ieee(&vec![0; id as usize])
     } else {
         let id: String = id.to_string();
         let id_bytes = id.as_bytes();
-        crc::crc32::checksum_ieee(id_bytes) & 0xffff_ffff
+        crc::crc32::checksum_ieee(id_bytes)
     };
 
     if crc != expected_crc {
