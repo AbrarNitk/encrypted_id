@@ -5,7 +5,7 @@ use crypto::{
     digest::Digest,
 };
 
-pub trait Encrypted {
+pub trait Encrypt {
     fn ekey(&self) -> crate::EResult<String>;
 }
 
