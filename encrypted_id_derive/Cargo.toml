@@ -9,6 +9,7 @@ include = ["src/**/*", "Cargo.toml"]
 readme = "README.md"
 keywords = ["encryption", "decryption", "encrypted_id", "decrypted_id"]
 repository = "https://github.com/AbrarNitk/encrypted_id"
+publish = true
 
 [lib]
 proc-macro = true
