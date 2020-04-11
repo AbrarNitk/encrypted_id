@@ -4,7 +4,7 @@ use crypto::{
     digest::Digest,
 };
 
-pub trait Decrypted {
+pub trait Decrypt {
     fn id(
         &self,
         ekey: &str,
