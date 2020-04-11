@@ -21,7 +21,9 @@ encrypted_id_derive = "0.1.0"
 * We can reuse the secret key as we are using in django to en-decrypt the id.
 
 * In version 0.1.4, name changes crate Encrypted to Encrypt, crate Decrypted to Decrypt, 
- function init_encrypt_conf to init_conf, struct function dkey to id.
+  function init_encrypt_conf to init_conf, struct function dkey to id. Made it independent crate,
+  in earlier version it has a dependency of diesel-mate, In this version removed it. I will make sure
+  that in future, I won't change any names, If so I'll deprecate first those.
 
 
 ```rust
