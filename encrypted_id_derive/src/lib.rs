@@ -23,7 +23,8 @@ struct EncDecOpts {
 
 #[proc_macro_derive(Encrypt, attributes(encdec_opts))]
 pub fn encryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive_input = parse_macro_input!(input as syn::DeriveInput);
+    let derive_input: syn::DeriveInput =
+        parse_macro_input!(input as syn::DeriveInput);
     let attrs: EncDecOpts = match EncDecOpts::from_derive_input(&derive_input) {
         Ok(attrs) => attrs,
         Err(err) => {
@@ -38,6 +39,29 @@ pub fn encryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         impl Encrypt for #ident {
             fn ekey(&self) -> Result<String> {
                 encode_ekey_util(self.id as u64, #sub_key)
+            }
+        }
+    )
+    .into()
+}
+
+#[proc_macro_derive(Decrypt, attributes(encdec_opts))]
+pub fn decryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let derive_input: syn::DeriveInput =
+        parse_macro_input!(input as syn::DeriveInput);
+    let attrs: EncDecOpts = match EncDecOpts::from_derive_input(&derive_input) {
+        Ok(attrs) => attrs,
+        Err(err) => {
+            return err.write_errors().into();
+        }
+    };
+
+    let sub_key = attrs.opts.sub_key;
+    let ident: syn::Ident = derive_input.ident;
+    quote!(
+        impl Decrypt for #ident {
+            fn dkey(&self, ekey: &str) -> Result<u64> {
+                decode_ekey_util(ekey, #sub_key)
             }
         }
     )
