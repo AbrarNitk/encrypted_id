@@ -4,8 +4,8 @@ extern crate syn;
 extern crate quote;
 extern crate darling;
 
-use crate::darling::FromMeta;
 use crate::darling::FromDeriveInput;
+use crate::darling::FromMeta;
 
 #[derive(Default, FromMeta, Debug)]
 #[darling(default)]
@@ -21,14 +21,25 @@ struct EncDecOpts {
     opts: EncDecArgs,
 }
 
-#[proc_macro_derive(Encrypted, attributes(encdec_opts))]
+#[proc_macro_derive(Encrypt, attributes(encdec_opts))]
 pub fn encryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive_input = parse_macro_input!(input as syn::DeriveInput);
-    let attrs = match EncDecOpts::from_derive_input(&derive_input) {
+    let attrs: EncDecOpts = match EncDecOpts::from_derive_input(&derive_input) {
         Ok(attrs) => attrs,
         Err(err) => {
             return err.write_errors().into();
         }
     };
-    quote!().into()
+
+    let sub_key: String = attrs.opts.sub_key;
+    let ident: syn::Ident = derive_input.ident;
+
+    quote!(
+        impl Encrypt for #ident {
+            fn ekey(&self) -> Result<String> {
+                encode_ekey_util(self.id as u64, #sub_key)
+            }
+        }
+    )
+    .into()
 }
