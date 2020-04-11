@@ -34,9 +34,10 @@ pub fn encryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     let sub_key: String = attrs.opts.sub_key;
     let ident: syn::Ident = derive_input.ident;
+    let generics: syn::Generics = derive_input.generics;
 
     quote!(
-        impl Encrypt for #ident {
+        impl Encrypt for #ident #generics {
             fn ekey(&self) -> Result<String> {
                 encode_ekey_util(self.id as u64, #sub_key)
             }
@@ -57,9 +58,10 @@ pub fn decryption(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     };
 
     let sub_key = attrs.opts.sub_key;
+    let generics = derive_input.generics;
     let ident: syn::Ident = derive_input.ident;
     quote!(
-        impl Decrypt for #ident {
+        impl Decrypt for #ident #generics {
             fn dkey(&self, ekey: &str) -> Result<u64> {
                 decode_ekey_util(ekey, #sub_key)
             }
