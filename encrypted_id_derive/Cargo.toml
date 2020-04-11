@@ -3,6 +3,12 @@ name = "encrypted_id_derive"
 version = "0.1.0"
 authors = ["AbrarNitk <abrar.nitk@gmail.com>"]
 edition = "2018"
+description = "Encryption and Decryption"
+license = "MIT"
+include = ["src/**/*", "Cargo.toml"]
+readme = "README.md"
+keywords = ["encryption", "decryption", "encrypted_id", "decrypted_id"]
+repository = "https://github.com/AbrarNitk/encrypted_id"
 
 [lib]
 proc-macro = true
