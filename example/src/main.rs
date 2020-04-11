@@ -1,6 +1,6 @@
-use encrypted_id::prelude::*;
 #[macro_use]
 extern crate encrypted_id_derive;
+use encrypted_id::prelude::*;
 
 #[derive(Debug, Default, Encrypt, Decrypt)] // Encrypt, Decrypt
 #[encdec_opts(opts(sub_key = "enky_demo_sub_key"))]
