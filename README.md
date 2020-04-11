@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Crates.io](https://img.shields.io/crates/v/encrypted_id)](https://crates.io/crates/encrypted_id)
-
+[![Build Status](https://travis-ci.org/AbrarNitk/encrypted_id.svg?branch=master)](https://travis-ci.org/AbrarNitk/encrypted_id)
 
 #### Usage
 
