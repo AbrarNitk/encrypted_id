@@ -1,11 +1,13 @@
 #[macro_use]
 extern crate lazy_static;
+
 use failure::Fail;
 
 pub type EResult<T> = std::result::Result<T, failure::Error>;
 
-mod encrypt;
-mod decrypt;
+pub mod decrypt;
+pub mod encrypt;
+pub mod prelude;
 
 #[derive(Default)]
 pub struct Config {
@@ -14,7 +16,8 @@ pub struct Config {
 }
 
 lazy_static! {
-    pub(crate) static ref CONFIG: std::sync::RwLock<Config> = std::sync::RwLock::new(Config::default());
+    pub(crate) static ref CONFIG: std::sync::RwLock<Config> =
+        std::sync::RwLock::new(Config::default());
 }
 
 pub fn init_conf(secret_key: &str) {
@@ -24,7 +27,7 @@ pub fn init_conf(secret_key: &str) {
 }
 
 #[derive(Fail, Debug)]
-pub enum Error {
+pub enum EError {
     #[fail(display = "Encryption error: {:?}", _0)]
     Encrypt(crypto::symmetriccipher::SymmetricCipherError),
 
@@ -37,6 +40,8 @@ pub enum Error {
     #[fail(display = "CRC mismatch")]
     CRCMismatch,
 
-    #[fail(display = "SecretKey is none in encrypt config, initialize config first")]
+    #[fail(
+        display = "SecretKey is none in encrypt config, initialize config first"
+    )]
     SecretKeyNotFound,
 }
