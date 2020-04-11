@@ -15,13 +15,13 @@ fn enc_test() {
         name: "foo".to_string(),
     };
     let ekey = e.ekey().unwrap();
-    let dkey = e.id(&ekey).unwrap();
-    assert_eq!("mZZLspleIzJqmKLa2Oio_g", ekey);
-    assert_eq!(5, dkey);
+    let id = e.id(&ekey).unwrap();
+    assert_eq!("AuovBQ1f2B1AmEd3o0Uq1Q", ekey);
+    assert_eq!(5, id);
 }
 
 
 fn main(){
-    init_conf("se(vh!38e21qca#9m7g0#7tyq+a*z#imfjr10&iezsfmh6l)v(");
+    init_conf("df(vh!3*8e21@qca#3)w#7ta*z#!bhsde43&#iez3sf5m1#h6l");
     enc_test()
 }
