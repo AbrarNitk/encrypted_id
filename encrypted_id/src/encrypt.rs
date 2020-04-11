@@ -1,4 +1,3 @@
-use base64;
 use byteorder::WriteBytesExt;
 use crypto::{
     buffer::{ReadBuffer, WriteBuffer},
@@ -17,7 +16,7 @@ fn encode_id_util(
 ) -> crate::EResult<String> {
     let version: u32 = 1;
     let crc: u32 =
-        crc::crc32::checksum_ieee(id.to_string().as_bytes()) & 0xffffffff;
+        crc::crc32::checksum_ieee(id.to_string().as_bytes()) & 0xffff_ffff;
 
     let mut msg: Vec<u8> = vec![];
     msg.write_u32::<byteorder::LittleEndian>(crc)?;
@@ -55,7 +54,7 @@ fn encode_id_util(
                 .take_read_buffer()
                 .take_remaining()
                 .iter()
-                .map(|&i| i),
+                .copied(),
         );
 
         match result {
