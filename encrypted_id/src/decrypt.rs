@@ -87,7 +87,15 @@ fn decode_util(
     Ok(id)
 }
 
+#[deprecated(since = "0.1.5", note = "Please use .decrypt() instead")]
 pub fn decode(
+    ekey: &str,
+    sub_key: &str,
+) -> crate::EResult<u64> {
+    decrypt(ekey, sub_key)
+}
+
+pub fn decrypt(
     ekey: &str,
     sub_key: &str,
 ) -> crate::EResult<u64> {
@@ -103,10 +111,22 @@ pub fn decode(
     )
 }
 
+#[deprecated(
+    since = "0.1.5",
+    note = "Please use .decrypt_with_secret() instead"
+)]
 pub fn decode_with_secret(
     ekey: &str,
     sub_key: &str,
-    secret_key: &str,
+    secret: &str,
 ) -> crate::EResult<u64> {
-    decode_util(ekey, sub_key, secret_key, secret_key.as_bytes().as_ref())
+    decrypt_with_secret(ekey, sub_key, secret)
+}
+
+pub fn decrypt_with_secret(
+    ekey: &str,
+    sub_key: &str,
+    secret: &str,
+) -> crate::EResult<u64> {
+    decode_util(ekey, sub_key, secret, secret.as_bytes().as_ref())
 }

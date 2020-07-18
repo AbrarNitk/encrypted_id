@@ -64,7 +64,15 @@ fn encode_id_util(
     Ok(base64::encode_config(&final_result, base64::URL_SAFE).replace("=", ""))
 }
 
+#[deprecated(since = "0.1.5", note = "Please use .encrypt() instead")]
 pub fn encode(
+    id: u64,
+    sub_key: &str,
+) -> crate::EResult<String> {
+    encrypt(id, sub_key)
+}
+
+pub fn encrypt(
     id: u64,
     sub_key: &str,
 ) -> crate::EResult<String> {
@@ -80,10 +88,22 @@ pub fn encode(
     )
 }
 
+#[deprecated(
+    since = "0.1.5",
+    note = "Please use .encrypt_with_secret() instead"
+)]
 pub fn encode_with_secret(
     id: u64,
     sub_key: &str,
-    secret_key: &str,
+    secret: &str,
 ) -> crate::EResult<String> {
-    encode_id_util(id, sub_key, secret_key, secret_key.as_bytes().as_ref())
+    encrypt_with_secret(id, sub_key, secret)
+}
+
+pub fn encrypt_with_secret(
+    id: u64,
+    sub_key: &str,
+    secret: &str,
+) -> crate::EResult<String> {
+    encode_id_util(id, sub_key, secret, secret.as_bytes().as_ref())
 }

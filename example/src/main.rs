@@ -21,6 +21,6 @@ fn enc_test() {
 }
 
 fn main() {
-    init_conf("df(vh!3*8e21@qca#3)w#7ta*z#!bhsde43&#iez3sf5m1#h6l");
+    encrypted_id::init("df(vh!3*8e21@qca#3)w#7ta*z#!bhsde43&#iez3sf5m1#h6l");
     enc_test()
 }

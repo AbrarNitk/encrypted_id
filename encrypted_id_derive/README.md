@@ -1,2 +1,3 @@
 # Rust Encryption and Decryption
- Derive Macros for [Crate](https://crates.io/crates/encrypted_id)
+
+Derive Macros for [encrypted_id](https://crates.io/crates/encrypted_id).

@@ -1,6 +1,3 @@
-use encrypted_id::decrypt::decode;
-use encrypted_id::encrypt::encode;
-use encrypted_id::init_conf;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -36,15 +33,16 @@ fn read_tests(path: &str) -> Vec<(u64, String)> {
 
 #[test]
 fn encrypt_id() {
-    init_conf(&read_secret_key());
+    encrypted_id::init(&read_secret_key());
     let st = std::time::Instant::now();
     for (i, expected) in read_tests("./test.txt") {
-        match decode(&expected, &format! {"{}", i}) {
+        match encrypted_id::decrypt(&expected, &format! {"{}", i}) {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
         };
+
         #[allow(clippy::match_wild_err_arm)]
-        match encode(i, &format! {"{}", i}) {
+        match encrypted_id::encrypt(i, &format! {"{}", i}) {
             Ok(encoded) => assert_eq!(encoded, expected), // println!("{}, {}", i, encoded),
             Err(_) => panic!(),
         };
@@ -57,9 +55,9 @@ fn encrypt_id() {
 
 #[test]
 fn enc_test() {
-    init_conf(&read_secret_key());
-    let ekey = encode(5, "sub_key_foo").unwrap();
-    let dkey = decode(&ekey, "sub_key_foo").unwrap();
+    encrypted_id::init(&read_secret_key());
+    let ekey = encrypted_id::encrypt(5, "sub_key_foo").unwrap();
+    let dkey = encrypted_id::decrypt(&ekey, "sub_key_foo").unwrap();
     assert_eq!("E86VGQhfxb_9rxSfjnBqKg", ekey);
     assert_eq!(5, dkey);
 }
@@ -68,10 +66,10 @@ fn enc_test() {
 #[ignore]
 #[test]
 fn ency_performance() {
-    init_conf(&read_secret_key());
+    encrypted_id::init(&read_secret_key());
     let st = std::time::Instant::now();
-    for i in 0..1000000 {
-        assert!(encode(i, &format! {"{}", i}).is_ok());
+    for i in 0..1_000_000 {
+        assert!(encrypted_id::encrypt(i, &format! {"{}", i}).is_ok());
     }
     println!("Time taken: {:?}", std::time::Instant::now() - st);
 }
@@ -81,11 +79,11 @@ fn ency_performance() {
 #[test]
 fn decode_performance() {
     let secret_key: &str = &read_secret_key();
-    init_conf(secret_key);
+    encrypted_id::init(secret_key);
     let tests = read_tests("10_6_ency_keys.txt");
     let st = std::time::Instant::now();
     for (i, expected) in tests {
-        match decode(&expected, &format! {"{}", i}) {
+        match encrypted_id::decrypt(&expected, &format! {"{}", i}) {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
         };
@@ -98,16 +96,17 @@ fn decode_performance() {
 #[test]
 fn encode_decode_performance() {
     let secret_key: &str = &read_secret_key();
-    init_conf(secret_key);
+    encrypted_id::init(secret_key);
     let tests = read_tests("10_6_ency_keys.txt");
     let st = std::time::Instant::now();
     for (i, expected) in tests {
-        match decode(&expected, &format! {"{}", i}) {
+        match encrypted_id::decrypt(&expected, &format! {"{}", i}) {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
         };
+
         #[allow(clippy::match_wild_err_arm)]
-        match encode(i, &format! {"{}", i}) {
+        match encrypted_id::encrypt(i, &format! {"{}", i}) {
             Ok(encoded) => assert_eq!(encoded, expected),
             Err(_) => panic!(),
         };
