@@ -1,8 +1,10 @@
-# Rust Encryption and Decryption
+# Encrypted ID
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Crates.io](https://img.shields.io/crates/v/encrypted_id)](https://crates.io/crates/encrypted_id)
 [![Build Status](https://travis-ci.org/AbrarNitk/encrypted_id.svg?branch=master)](https://travis-ci.org/AbrarNitk/encrypted_id)
+
+Read more about this library on: [fifthtry.com/abrar/encrypted_id/](https://www.fifthtry.com/abrar/encrypted_id/).
 
 #### Usage
 
@@ -20,7 +22,7 @@ encrypted_id_derive = "0.1.0"
 * It is same as django [encrypted_id](https://pypi.org/project/django-encrypted-id/).
 * We can reuse the secret key as we are using in django to en-decrypt the id.
 
-* In version 0.1.4, name changes crate Encrypted to Encrypt, crate Decrypted to Decrypt, 
+* In version 0.1.4, name changes crate Encrypted to Encrypt, crate Decrypted to Decrypt,
   function init_encrypt_conf to init_conf, struct function dkey to id. Made it independent crate,
   in earlier version it has a dependency of diesel-mate, In this version removed it. I will make sure
   that in future, I won't change any names, If so I'll deprecate first those.
@@ -73,8 +75,8 @@ fn encrypt_id() {
     assert_eq!(5, dkey);
 }
 
-``` 
+```
 
 #### *Note Point
 We can use this crate with diesel also, just derive Encrypt, Decrypt both trait and define sub_key.
-But make sure struct should contain a field `id: u64`. 
+But make sure struct should contain a field `id: u64`.

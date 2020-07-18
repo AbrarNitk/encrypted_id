@@ -1,12 +1,14 @@
+use encrypted_id::decrypt::decode;
+use encrypted_id::encrypt::encode;
+use encrypted_id::init_conf;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use encrypted_id::decrypt::decode;
-use encrypted_id::init_conf;
-use encrypted_id::encrypt::encode;
 
 fn read_file(path: &str) -> Vec<String> {
-    let f1: BufReader<File> =
-        BufReader::new(File::open(path).expect(&format!("Not able to read file : {}", path)));
+    let f1: BufReader<File> = BufReader::new(
+        File::open(path)
+            .unwrap_or_else(|_| panic!("Not able to read file : {}", path)),
+    );
     let mut lines = vec![];
     for it in f1.lines() {
         lines.push(it.unwrap())
@@ -26,7 +28,7 @@ fn read_tests(path: &str) -> Vec<(u64, String)> {
     read_file(path)
         .into_iter()
         .map(|x| {
-            let t = x.split(",").collect::<Vec<&str>>();
+            let t = x.split(',').collect::<Vec<&str>>();
             (t[0].parse::<u64>().unwrap(), t[1].trim().to_string())
         })
         .collect::<Vec<(u64, String)>>()
@@ -41,12 +43,16 @@ fn encrypt_id() {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
         };
+        #[allow(clippy::match_wild_err_arm)]
         match encode(i, &format! {"{}", i}) {
             Ok(encoded) => assert_eq!(encoded, expected), // println!("{}, {}", i, encoded),
-            Err(_) => assert!(false),
+            Err(_) => panic!(),
         };
     }
-    println!("encrypt_id: Time taken: {:?}", std::time::Instant::now() - st);
+    println!(
+        "encrypt_id: Time taken: {:?}",
+        std::time::Instant::now() - st
+    );
 }
 
 #[test]
@@ -65,10 +71,7 @@ fn ency_performance() {
     init_conf(&read_secret_key());
     let st = std::time::Instant::now();
     for i in 0..1000000 {
-        assert!(match encode(i, &format! {"{}", i}) {
-            Ok(_) => true,
-            Err(_) => false,
-        });
+        assert!(encode(i, &format! {"{}", i}).is_ok());
     }
     println!("Time taken: {:?}", std::time::Instant::now() - st);
 }
@@ -103,9 +106,10 @@ fn encode_decode_performance() {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
         };
+        #[allow(clippy::match_wild_err_arm)]
         match encode(i, &format! {"{}", i}) {
             Ok(encoded) => assert_eq!(encoded, expected),
-            Err(_) => assert!(false),
+            Err(_) => panic!(),
         };
     }
     println!("Time taken: {:?}", std::time::Instant::now() - st);

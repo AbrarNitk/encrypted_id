@@ -20,8 +20,7 @@ fn enc_test() {
     assert_eq!(5, id);
 }
 
-
-fn main(){
+fn main() {
     init_conf("df(vh!3*8e21@qca#3)w#7ta*z#!bhsde43&#iez3sf5m1#h6l");
     enc_test()
 }

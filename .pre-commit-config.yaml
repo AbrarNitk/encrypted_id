@@ -1,0 +1,35 @@
+-   repo: local
+    hooks:
+    -   id: rustfmt
+        name: Rust format
+        entry: cargo
+        language: system
+        args:
+        - fmt
+        - --
+        files: \.rs$
+    -   id: clippy
+        name: Clippy
+        entry: sh scripts/clippy.sh
+        language: system
+        files: \.rs$
+        pass_filenames: false
+
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.3
+    hooks:
+    - id: check-added-large-files
+      language_version: python
+      args:
+      - --maxkb=500
+    - id: trailing-whitespace
+      language_version: python
+      args: [--markdown-linebreak-ext=md]
+    - id: check-merge-conflict
+      language_version: python
+    - id: check-case-conflict
+      language_version: python
+    - id: check-symlinks
+      language_version: python
+    - id: end-of-file-fixer
+      language_version: python
