@@ -1,27 +1,27 @@
--   repo: local
-    hooks:
-    -   id: rustfmt
-        name: Rust format
-        entry: cargo
-        language: system
-        args:
+- repo: local
+  hooks:
+    - id: rustfmt
+      name: Rust format
+      entry: cargo
+      language: system
+      args:
         - fmt
         - --
-        files: \.rs$
-    -   id: clippy
-        name: Clippy
-        entry: sh scripts/clippy.sh
-        language: system
-        files: \.rs$
-        pass_filenames: false
+      files: \.rs$
+    - id: clippy
+      name: Clippy
+      entry: sh scripts/clippy.sh
+      language: system
+      files: \.rs$
+      pass_filenames: false
 
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.2.3
-    hooks:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.2.3
+  hooks:
     - id: check-added-large-files
       language_version: python
       args:
-      - --maxkb=500
+        - --maxkb=500
     - id: trailing-whitespace
       language_version: python
       args: [--markdown-linebreak-ext=md]

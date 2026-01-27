@@ -1,2 +1,3 @@
 [workspace]
 members = ["encrypted_id", "encrypted_id_derive", "example"]
+resolver = "2"

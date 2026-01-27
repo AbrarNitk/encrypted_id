@@ -1,6 +1,5 @@
 language: rust
-rust:
-  1.42.0
+rust: 1.91.0
 script:
   - cargo build --verbose --all
   - cargo test --verbose --all

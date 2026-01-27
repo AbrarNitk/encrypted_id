@@ -3,8 +3,7 @@ use std::io::{BufRead, BufReader};
 
 fn read_file(path: &str) -> Vec<String> {
     let f1: BufReader<File> = BufReader::new(
-        File::open(path)
-            .unwrap_or_else(|_| panic!("Not able to read file : {}", path)),
+        File::open(path).unwrap_or_else(|_| panic!("Not able to read file : {}", path)),
     );
     let mut lines = vec![];
     for it in f1.lines() {
@@ -36,6 +35,7 @@ fn encrypt_id() {
     encrypted_id::init(&read_secret_key());
     let st = std::time::Instant::now();
     for (i, expected) in read_tests("./test.txt") {
+        println!("{}", i);
         match encrypted_id::decrypt(&expected, &format! {"{}", i}) {
             Ok(decoded) => assert_eq!(decoded, i),
             Err(err) => println!("{:?}", err),
@@ -43,7 +43,7 @@ fn encrypt_id() {
 
         #[allow(clippy::match_wild_err_arm)]
         match encrypted_id::encrypt(i, &format! {"{}", i}) {
-            Ok(encoded) => assert_eq!(encoded, expected), // println!("{}, {}", i, encoded),
+            Ok(encoded) => assert_eq!(encoded, expected),
             Err(_) => panic!(),
         };
     }
@@ -68,7 +68,7 @@ fn enc_test() {
 fn ency_performance() {
     encrypted_id::init(&read_secret_key());
     let st = std::time::Instant::now();
-    for i in 0..1_000_000 {
+    for i in 0..1_000_000_000 {
         assert!(encrypted_id::encrypt(i, &format! {"{}", i}).is_ok());
     }
     println!("Time taken: {:?}", std::time::Instant::now() - st);

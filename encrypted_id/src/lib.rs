@@ -37,10 +37,10 @@ pub fn init(secret_key: &str) {
 #[derive(Fail, Debug)]
 pub enum EError {
     #[fail(display = "Encryption error: {:?}", _0)]
-    Encrypt(crypto::symmetriccipher::SymmetricCipherError),
+    Encrypt(String),
 
     #[fail(display = "Decryption error: {:?}", _0)]
-    Decrypt(crypto::symmetriccipher::SymmetricCipherError),
+    Decrypt(String),
 
     #[fail(display = "Invalid input")]
     InvalidInput,
@@ -48,8 +48,6 @@ pub enum EError {
     #[fail(display = "CRC mismatch")]
     CRCMismatch,
 
-    #[fail(
-        display = "SecretKey is none in encrypt config, initialize config first"
-    )]
+    #[fail(display = "SecretKey is none in encrypt config, initialize config first")]
     SecretKeyNotFound,
 }

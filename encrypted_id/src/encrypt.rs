@@ -1,8 +1,11 @@
+use aes::Aes256;
+use base64::{engine::general_purpose::URL_SAFE, Engine as _};
 use byteorder::WriteBytesExt;
-use crypto::{
-    buffer::{ReadBuffer, WriteBuffer},
-    digest::Digest,
-};
+use cbc::Encryptor;
+use cipher::{BlockEncryptMut, KeyIvInit};
+use sha2::{Digest, Sha256};
+
+type Aes256CbcEnc = Encryptor<Aes256>;
 
 pub trait Encrypt {
     fn ekey(&self) -> crate::EResult<String>;
@@ -15,67 +18,36 @@ fn encode_id_util(
     secret_key_bytes: &[u8],
 ) -> crate::EResult<String> {
     let version: u32 = 1;
-    let crc: u32 = crc::crc32::checksum_ieee(id.to_string().as_bytes());
+    let crc = crc::Crc::<u32>::new(&crc::CRC_32_ISO_HDLC);
+    let checksum: u32 = crc.checksum(id.to_string().as_bytes());
 
     let mut msg: Vec<u8> = vec![];
-    msg.write_u32::<byteorder::LittleEndian>(crc)?;
+    msg.write_u32::<byteorder::LittleEndian>(checksum)?;
     msg.write_u64::<byteorder::LittleEndian>(id)?;
     msg.write_u32::<byteorder::LittleEndian>(version)?;
 
-    let mut sha_value = crypto::sha2::Sha256::new();
-    sha_value.input_str(&format!("{}{}", secret_key, sub_key));
-    let mut iv: Vec<u8> = vec![0; 32];
-    sha_value.result(&mut iv);
-    let iv = &iv[..16];
-    let mut encryptor = crypto::aes::cbc_encryptor(
-        crypto::aes::KeySize::KeySize256,
-        &secret_key_bytes[..32],
-        iv,
-        crypto::blockmodes::NoPadding,
-    );
+    let mut hasher = Sha256::new();
+    hasher.update(format!("{}{}", secret_key, sub_key));
+    let hash = hasher.finalize();
+    let iv = &hash[..16];
 
-    let mut final_result = Vec::<u8>::new();
-    let mut read_buffer = crypto::buffer::RefReadBuffer::new(msg.as_ref());
-    let mut buffer = [0; 16];
-    let mut write_buffer = crypto::buffer::RefWriteBuffer::new(&mut buffer);
+    let mut encryptor = Aes256CbcEnc::new_from_slices(&secret_key_bytes[..32], iv)
+        .map_err(|e| crate::EError::Encrypt(e.to_string()))?;
 
-    loop {
-        let result =
-            encryptor.encrypt(&mut read_buffer, &mut write_buffer, true);
+    // msg is exactly 16 bytes (4+8+4), so one block.
+    // We can cast the slice to a GenericArray for the block.
+    let mut block = cipher::generic_array::GenericArray::clone_from_slice(&msg);
+    encryptor.encrypt_block_mut(&mut block);
 
-        let result = match result {
-            Ok(v) => v,
-            Err(e) => return Err(crate::EError::Encrypt(e).into()),
-        };
-
-        final_result.extend(
-            write_buffer
-                .take_read_buffer()
-                .take_remaining()
-                .iter()
-                .copied(),
-        );
-
-        match result {
-            crypto::buffer::BufferResult::BufferUnderflow => break,
-            crypto::buffer::BufferResult::BufferOverflow => {}
-        }
-    }
-    Ok(base64::encode_config(&final_result, base64::URL_SAFE).replace("=", ""))
+    Ok(URL_SAFE.encode(&block).replace("=", ""))
 }
 
 #[deprecated(since = "0.1.5", note = "Please use .encrypt() instead")]
-pub fn encode(
-    id: u64,
-    sub_key: &str,
-) -> crate::EResult<String> {
+pub fn encode(id: u64, sub_key: &str) -> crate::EResult<String> {
     encrypt(id, sub_key)
 }
 
-pub fn encrypt(
-    id: u64,
-    sub_key: &str,
-) -> crate::EResult<String> {
+pub fn encrypt(id: u64, sub_key: &str) -> crate::EResult<String> {
     let config = crate::CONFIG.read().unwrap();
     if config.secret_key.is_none() {
         return Err(crate::EError::SecretKeyNotFound.into());
@@ -88,22 +60,11 @@ pub fn encrypt(
     )
 }
 
-#[deprecated(
-    since = "0.1.5",
-    note = "Please use .encrypt_with_secret() instead"
-)]
-pub fn encode_with_secret(
-    id: u64,
-    sub_key: &str,
-    secret: &str,
-) -> crate::EResult<String> {
+#[deprecated(since = "0.1.5", note = "Please use .encrypt_with_secret() instead")]
+pub fn encode_with_secret(id: u64, sub_key: &str, secret: &str) -> crate::EResult<String> {
     encrypt_with_secret(id, sub_key, secret)
 }
 
-pub fn encrypt_with_secret(
-    id: u64,
-    sub_key: &str,
-    secret: &str,
-) -> crate::EResult<String> {
+pub fn encrypt_with_secret(id: u64, sub_key: &str, secret: &str) -> crate::EResult<String> {
     encode_id_util(id, sub_key, secret, secret.as_bytes().as_ref())
 }

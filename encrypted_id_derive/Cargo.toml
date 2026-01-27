@@ -2,7 +2,7 @@
 name = "encrypted_id_derive"
 version = "0.1.0"
 authors = ["AbrarNitk <abrar.nitk@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Encryption and Decryption"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml"]
@@ -15,6 +15,6 @@ publish = true
 proc-macro = true
 
 [dependencies]
-syn = "1.0.17"
-quote = "1.0.3"
-darling = "0.10.2"
+syn = "2.0"
+quote = "1.0"
+darling = "0.23"
