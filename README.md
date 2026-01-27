@@ -4,9 +4,8 @@
 [![Crates.io](https://img.shields.io/crates/v/encrypted_id)](https://crates.io/crates/encrypted_id)
 [![Build Status](https://travis-ci.org/AbrarNitk/encrypted_id.svg?branch=master)](https://travis-ci.org/AbrarNitk/encrypted_id)
 
-Read more about this library on: [fifthtry.com/abrar/encrypted_id/](https://www.fifthtry.com/abrar/encrypted_id/).
 
-#### Usage
+## Usage
 
 ```toml
 [dependencies]

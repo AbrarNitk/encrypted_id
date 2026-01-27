@@ -16,8 +16,8 @@ struct EncDecArgs {
 #[derive(FromDeriveInput, Debug)]
 #[darling(attributes(encdec_opts), forward_attrs(allow, doc, cfg))]
 struct EncDecOpts {
-    ident: syn::Ident,
-    attrs: Vec<syn::Attribute>,
+    // ident: syn::Ident,
+    // attrs: Vec<syn::Attribute>,
     opts: EncDecArgs,
 }
 

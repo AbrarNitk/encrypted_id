@@ -1,9 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 
-use failure::Fail;
-
-pub type EResult<T> = std::result::Result<T, failure::Error>;
+pub type EResult<T> = std::result::Result<T, EError>;
 
 pub mod decrypt;
 pub mod encrypt;
@@ -34,20 +32,23 @@ pub fn init(secret_key: &str) {
     conf.secret_key_bytes = secret_key.as_bytes().to_owned();
 }
 
-#[derive(Fail, Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum EError {
-    #[fail(display = "Encryption error: {:?}", _0)]
+    #[error("Encryption error: {0}")]
     Encrypt(String),
 
-    #[fail(display = "Decryption error: {:?}", _0)]
+    #[error("Decryption error: {0}")]
     Decrypt(String),
 
-    #[fail(display = "Invalid input")]
+    #[error("Invalid input")]
     InvalidInput,
 
-    #[fail(display = "CRC mismatch")]
+    #[error("CRC mismatch")]
     CRCMismatch,
 
-    #[fail(display = "SecretKey is none in encrypt config, initialize config first")]
+    #[error("SecretKey is none in encrypt config, initialize config first")]
     SecretKeyNotFound,
+
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
 }
